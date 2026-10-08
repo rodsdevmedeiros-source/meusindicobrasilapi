@@ -18,7 +18,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+            HttpSecurity http
+    ) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
@@ -31,32 +32,49 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        // Rotas públicas
                         .requestMatchers(
                                 "/auth/cadastro",
                                 "/auth/login"
                         ).permitAll()
 
+                        // Cadastrar apartamento
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/apartamento"
                         ).hasRole("USUARIO")
 
+                        // Editar apartamento
                         .requestMatchers(
                                 HttpMethod.PUT,
                                 "/apartamento/**"
                         ).hasRole("USUARIO")
 
+                        // Deletar apartamento
                         .requestMatchers(
                                 HttpMethod.DELETE,
                                 "/apartamento/**"
                         ).hasRole("USUARIO")
 
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/funcionario"
+                        ).hasRole("USUARIO")
 
                         .requestMatchers(
                                 HttpMethod.GET,
+                                "/funcionario",
+                                "/funcionario/**"
+                        ).authenticated()
+
+                        // Consultar apartamentos
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/apartamento",
                                 "/apartamento/**"
                         ).authenticated()
 
+                        // Qualquer outra rota
                         .anyRequest().authenticated()
                 )
 
